@@ -36,6 +36,47 @@ impl<T: Add<T, Output = T> + Clone> Iterator for Fibonacci<T> {
     }
 }
 
+pub struct Triangle {
+    idx: u64,
+    prev: u64,
+}
+
+impl Iterator for Triangle {
+    type Item = u64;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.idx += 1;
+        let result = self.prev + self.idx;
+        self.prev = result;
+        Some(result)
+    }
+}
+
+impl Default for Triangle {
+    fn default() -> Self { Triangle {idx:0, prev: 0} }
+}
+
+pub struct Collatz {
+    pub curr: u64,
+}
+
+impl Iterator for Collatz {
+    type Item = u64;
+    fn next(&mut self) -> Option<Self::Item> {
+        let r;
+        if self.curr % 2 == 0 {
+            r = self.curr / 2;
+        }
+        else if self.curr == 1 {
+            return None
+        }
+        else {
+            r = self.curr * 3 + 1
+        }
+        self.curr = r;
+        Some(r)
+    }
+}
+
 pub fn simple_is_prime(n: u64) -> bool {
     for x in 2..(sqrt(n) + 1) {
         if n % x == 0 {return false}
@@ -53,7 +94,6 @@ pub fn largest_prime_factor(n: u64) -> u64 {
         curr = result[1].clone();
     }
     factors.pop().expect("FUCK")
-
 }
 
 fn find_lowest_factor(n: u64) -> [u64; 2] {
@@ -61,6 +101,18 @@ fn find_lowest_factor(n: u64) -> [u64; 2] {
         if n % x == 0 {return [x, n/x]}
     }
     return [n, 1]
+}
+
+pub fn prime_factorization(n: u64) -> Vec<u64> {
+    let mut curr: u64 = n;
+    let mut factors: Vec<u64> = vec![];
+    loop {
+        let result = find_lowest_factor(curr);
+        factors.push(result[0]);
+        if simple_is_prime(curr) == true {break}
+        curr = result[1].clone();
+    }
+    factors
 }
 
 pub fn rev_string(str: &str) -> String {
@@ -106,4 +158,29 @@ pub fn eratosthenes(limit: usize) -> Vec<bool>{
         }
     }
     sieve
+}
+
+pub fn get_all_divisors(n: u64) -> Vec<u64> {
+    let mut divisors:Vec<u64> = vec![];
+    if n == 1 {divisors.push(1)}
+    else {
+        let prime_factors = prime_factorization(n);
+        divisors.push(1);
+        let mut last_prime:u64 = 0;
+        let mut factor:u64 = 0;
+        let mut slice_len:u64 = 0;
+        for prime in prime_factors {
+            if last_prime != prime {
+                slice_len = divisors.len() as u64;
+                factor = prime
+            } else {
+                factor *= prime
+            }
+            for i in 0..slice_len {
+                divisors.push(divisors[i as usize] * factor)
+            }
+            last_prime = prime
+        }
+    }
+    divisors
 }

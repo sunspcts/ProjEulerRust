@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 num-traits = "0.2"
 num-integer = "0.1"
+num = "0.4"
