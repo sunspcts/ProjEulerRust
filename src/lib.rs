@@ -55,9 +55,55 @@ pub fn largest_prime_factor(n: u64) -> u64 {
     factors.pop().expect("FUCK")
 
 }
+
 fn find_lowest_factor(n: u64) -> [u64; 2] {
     for x in 2..n {
         if n % x == 0 {return [x, n/x]}
     }
     return [n, 1]
+}
+
+pub fn rev_string(str: &str) -> String {
+    str.chars().rev().collect::<String>()
+}
+
+pub fn rev_int(arg: u64) -> u64 {
+    let s = arg.to_string();
+    rev_string(&s).parse::<u64>().unwrap()
+}
+
+pub fn nth_prime(n: u32) -> u64 {
+    if n < 1 {
+        return 0;
+    }
+    let x = if n <= 10 { 10.0 } else { n as f64 };
+    let limit: usize = (x * (x * (x).ln()).ln()).ceil() as usize;
+    
+    let mut count = 0;
+    let sieve = eratosthenes(limit);
+
+    for prime in 2..limit {
+        if !sieve[prime] {
+            continue;
+        }
+        count += 1;
+        if count == n {
+            return prime as u64;
+        }
+    }
+    0
+}
+
+pub fn eratosthenes(limit: usize) -> Vec<bool>{
+    let mut sieve: Vec<bool> = vec![true; limit];
+    sieve[0] = false; sieve[1] = false;
+    for index in 2..limit {
+        if !sieve[index] {
+            continue;
+        }
+        for multiple in ((index.pow(2))..limit).step_by(index) {
+            sieve[multiple] = false;
+        }
+    }
+    sieve
 }
