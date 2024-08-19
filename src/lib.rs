@@ -1,5 +1,5 @@
 use num_integer::sqrt;
-use num_traits::One;
+use num::One;
 use std::{mem, ops::Add};
 
 pub struct Fibonacci<T> {

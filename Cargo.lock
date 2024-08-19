@@ -87,5 +87,4 @@ version = "0.1.0"
 dependencies = [
  "num",
  "num-integer",
- "num-traits",
 ]
