@@ -184,3 +184,11 @@ pub fn get_all_divisors(n: u64) -> Vec<u64> {
     }
     divisors
 }
+
+pub fn factorial(num: u128) -> u128 {
+    (1..=num).product()
+}
+
+pub fn as_digit_vec(n:u64) -> Vec<u64> {
+    n.to_string().chars().map(|x| x.to_digit(10).unwrap() as u64).collect()
+} 
