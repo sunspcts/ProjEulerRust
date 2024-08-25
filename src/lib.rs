@@ -55,6 +55,25 @@ impl Default for Triangle {
     fn default() -> Self { Triangle {idx:0, prev: 0} }
 }
 
+pub struct Pentagon {
+    idx: u64,
+    prev: u64,
+}
+
+impl Iterator for Pentagon {
+    type Item = u64;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.idx += 1;
+        let result = self.prev + (self.idx - 1) * 3 + 1;
+        self.prev = result;
+        Some(result)
+    }
+}
+
+impl Default for Pentagon {
+    fn default() -> Self { Pentagon {idx:0, prev: 0} }
+}
+
 pub struct Collatz {
     pub curr: u64,
 }
@@ -78,6 +97,7 @@ impl Iterator for Collatz {
 }
 
 pub fn simple_is_prime(n: u64) -> bool {
+    if n == 1 {return false}
     for x in 2..(sqrt(n) + 1) {
         if n % x == 0 {return false}
     }

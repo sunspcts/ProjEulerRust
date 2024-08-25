@@ -1,45 +1,45 @@
-use::proj_euler_rust::eratosthenes;
+use proj_euler_rust::simple_is_prime;
 
 fn main() {
-    let mut primes:Vec<u64> = vec![];
-    for (i, j) in eratosthenes(1000000).into_iter().enumerate() {
-        if j {primes.push(i as u64)}
-    }
-    let mut truncatable_primes:Vec<u64> = vec![];
-    for i in &primes {
-        if *i < 10 {continue}
-        if is_trunc_prime(*i, &primes) {
-            truncatable_primes.push(*i);
+    let mut s = 0;
+    let mut branches: Vec<u64> = vec![2, 3, 5, 7];
+    branches = add_right(&branches);
+    while branches.len() != 0 {
+        for b in &branches {
+            if is_left_truncatable(*b) {
+                s += *b;
+            }
         }
-        if truncatable_primes.len() == 10 {
-            break
-        }
+    branches = add_right(&branches);    
     }
-    println!("{:?}", truncatable_primes)
-
+    println!("{}", s)
 }
 
-fn is_trunc_prime(n: u64, primes:&Vec<u64>) -> bool {
-    let mut right = n;
-    let mut left = n;
-    while right != 0 {
-        if !primes.contains(&right) {return false}
-        right = trunc_right(right);
+
+fn add_right(v: &Vec<u64>) -> Vec<u64> {
+    let digits: [u64; 4] = [1, 3, 7, 9];
+    let mut w = Vec::new();
+    for branch in v {
+        for d in digits.iter() {
+            let candidate = branch * 10 + d;
+            if simple_is_prime(candidate) {
+                w.push(candidate)
+            }
+        }
     }
-    while left != 0 {
-        if !primes.contains(&left) {return false}
-        left = trunc_left(left);
-    }
-    true
-}
-fn trunc_right(n: u64) -> u64 {
-    n / 10
+    w
 }
 
 fn trunc_left(n: u64) -> u64 {
-    let mut factor = 1; 
-    while factor * 10 < n {
-        factor *= 10 
+    let zeroes = (n as f32).log(10f32) as u32;
+    n % 10u64.pow(zeroes)
+}
+
+fn is_left_truncatable(n: u64) -> bool {
+    let mut nc = trunc_left(n);
+    while nc > 0 {
+        if !simple_is_prime(nc) {return false}
+        nc = trunc_left(nc);
     }
-    n % factor
+    true
 }
